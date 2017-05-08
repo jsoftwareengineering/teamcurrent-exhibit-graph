@@ -10,19 +10,36 @@ x0 = 0
 y0 = 0
 xMax = 0
 yMax = 0
-xScaleMax = 40
-yScaleMax = 40
+xScaleMax = 10
+yScaleMax = 10
 exhibitArray = []
+var maskImage
 
 function preload() {
-	//load all exhibits and images lmao
+	//load all exhibits and images
+	maskImage = loadImage('images/mask.png')
 	table = loadTable('exhibits.csv', 'csv', 'header', function(table) {
 		for (i = 0 ; i < table.getRowCount() ; i++) {
 			var row = table.getRow(i)
 			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2),
 				row.getNum(3), row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7))
+			
+			//used to give correct images in the loadImage callback below
+			//hacky and should probably be changed
+			//also currently not working
+			exhibit.i = i 
 			exhibitArray.push(exhibit)
+
+			loadImage(exhibit.imageLink, function(img) {
+				exhibit.fullImage = img
+				exhibit.circleImage = createCircleImage(img)
+				alert(exhibit.imageLink)
+				
+			})
+			
 		}
+
+		
 	})
 	
 }
@@ -32,7 +49,26 @@ function setup() {
 	fill(0)
 	calculate00AndMax()
 	drawAxes()
+	imageMode(CENTER)
 	line(cX(20), cY(10), cX(0), cY(0))	
+
+	noFill()
+	strokeWeight(15)
+	stroke('blue')
+	
+	
+	for(i = 0 ; i < 11 ; i++) {
+		/*ellipse(cX(i) , cY(i) , 100, 100)
+		var photo = exhibitArray[i].circleImage
+		image(photo, cX(i), cY(i), photo.width,
+			photo.height)
+		*/
+		point(cX(i), cY(i))
+	}
+	//var photo = exhibitArray[1].circleImage
+	
+	//image(photo, cX(20), cY(20), photo.width, photo.height)
+	
 }
 
 function windowResized() {
@@ -54,7 +90,8 @@ function calculate00AndMax() {
 }
 
 function drawAxes() {
-	//the non 0 values are used to 
+	strokeWeight(3)
+	stroke('gray')
 	line(x0, yMax, x0, y0)
 	line(x0,  y0,  xMax, y0)
 }
@@ -66,7 +103,7 @@ function cX(x) {
 }
 
 function cY(y) {
-	return y0 - y*((y0 - yScaleMax) / yScaleMax)
+	return y0 - y*((y0 - yMax) / yScaleMax)
 }
 
 function Exhibit(museum, location, imageLink, interaction,
@@ -81,4 +118,37 @@ function Exhibit(museum, location, imageLink, interaction,
 	this.unpredictability = unpredictability
 	this.numberOfUsers = numberOfUsers
 
+}
+
+function createCircleImage(img) {
+	var photo = img
+	var width = photo.width
+	var height = photo.height
+	var dif = 0
+
+	//resize based on bigger side, find difference (amount that needs to be removed to make square), 
+	//take square from photo based on which side is longer (removing the extras) 
+	//allowing us to mask using the square shaped masking circle
+	if(width > height) {
+		photo.resize(0, 100)
+		width = photo.width
+		height = photo.height
+		dif = width - height
+
+		photo = photo.get(round(dif/2), 0, width - dif, height)		
+
+	} else if (height > width) {
+		photo.resize(100, 0)
+		width = photo.width
+		height = photo.height
+		dif = height - width
+
+		photo = photo.get(0, round(dif/2), width, height - dif)
+	}
+
+	//alert('w: ' + width + ' h: ' + height + ' dif: ' + dif)
+	//alert('w: ' + photo.width + ' h: ' + photo.height)
+
+	photo.mask(maskImage)
+	return photo
 }
