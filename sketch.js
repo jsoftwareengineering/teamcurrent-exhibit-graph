@@ -1,9 +1,12 @@
 /*
 	things to consider/do:
+		totals given criteria for x and y plotting
+		hide exhibits given criteria
 		how to handle exhibit overlap
-		make colored circle around each image
+		axis tick marks
 		how to store/decide what colors to make museums
-		tooltips
+		legend for museum colors
+		tooltips for details
 */
 
 x0 = 0
@@ -24,48 +27,38 @@ function preload() {
 			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2),
 				row.getNum(3), row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7))
 			
-			//used to give correct images in the loadImage callback below
-			//hacky and should probably be changed
-			//also currently not working
-			exhibit.i = i 
+			exhibit.fullImage = loadImage(exhibit.imageLink)
 			exhibitArray.push(exhibit)
-
-			loadImage(exhibit.imageLink, function(img) {
-				exhibit.fullImage = img
-				exhibit.circleImage = createCircleImage(img)
-				alert(exhibit.imageLink)
-				
-			})
-			
-		}
-
-		
+		}		
 	})
+	
 	
 }
 
 function setup() {
+	//create all circle images (can't get this to work in preload so leaving here for now)
+	for(i = 0 ; i < exhibitArray.length ; i++) {
+		exhibitArray[i].circleImage = createCircleImage(exhibitArray[i].fullImage)
+	}
+
 	createCanvas(windowWidth, windowHeight)
 	fill(0)
 	calculate00AndMax()
 	drawAxes()
 	imageMode(CENTER)
-	line(cX(20), cY(10), cX(0), cY(0))	
 
 	noFill()
 	strokeWeight(15)
 	stroke('blue')
 	
 	
-	for(i = 0 ; i < 11 ; i++) {
-		/*ellipse(cX(i) , cY(i) , 100, 100)
+	for(i = 0 ; i < exhibitArray.length ; i++) {
+		ellipse(cX(i) , cY(i) , 100, 100)
 		var photo = exhibitArray[i].circleImage
 		image(photo, cX(i), cY(i), photo.width,
 			photo.height)
-		*/
-		point(cX(i), cY(i))
 	}
-	//var photo = exhibitArray[1].circleImage
+	var photo = exhibitArray[1].circleImage
 	
 	//image(photo, cX(20), cY(20), photo.width, photo.height)
 	
