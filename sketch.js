@@ -16,8 +16,15 @@ exhibitArray = []
 
 function preload() {
 	//load all exhibits and images lmao
-	//var table = loadTable('exhibits.csv', 'csv', 'header')
-
+	table = loadTable('exhibits.csv', 'csv', 'header', function(table) {
+		for (i = 0 ; i < table.getRowCount() ; i++) {
+			var row = table.getRow(i)
+			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2),
+				row.getNum(3), row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7))
+			exhibitArray.push(exhibit)
+		}
+	})
+	
 }
 
 function setup() {
@@ -25,7 +32,7 @@ function setup() {
 	fill(0)
 	calculate00AndMax()
 	drawAxes()
-	line(cX(20), cY(10), cX(0), cY(0))
+	line(cX(20), cY(10), cX(0), cY(0))	
 }
 
 function windowResized() {
