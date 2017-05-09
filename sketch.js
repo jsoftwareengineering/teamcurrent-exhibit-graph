@@ -13,10 +13,12 @@ x0 = 0
 y0 = 0
 xMax = 0
 yMax = 0
-xScaleMax = 10
-yScaleMax = 10
+xScaleMax = 50
+yScaleMax = 7
 exhibitArray = []
 var maskImage
+var cardo
+var pathwayGothic
 
 function preload() {
 	//load all exhibits and images
@@ -32,6 +34,8 @@ function preload() {
 		}		
 	})
 	
+	//cardo = loadFont('fonts/Cardo-Regular.otf')
+	//pathwayGothic = loadFont('fonts/PathwayGothicOne-Regular.ttf')
 	
 }
 
@@ -68,7 +72,6 @@ function windowResized() {
 	resizeCanvas(windowWidth, windowHeight)
 	calculate00AndMax()
 	drawAxes()
-	line(cX(20), cY(10), cX(0), cY(0))
 }
 
 function draw() {
@@ -85,8 +88,36 @@ function calculate00AndMax() {
 function drawAxes() {
 	strokeWeight(3)
 	stroke('gray')
+
+	//x axis
+	line(x0,  y0,  xMax, y0)	
+	//y axis
 	line(x0, yMax, x0, y0)
-	line(x0,  y0,  xMax, y0)
+
+	var tickSize = 5
+	var numTicks = 5
+
+	//x ticks and labels
+	var division = (xMax - x0) / numTicks
+	var tickNum = xScaleMax / numTicks
+	textFont('Cardo')	
+	fill('gray')
+	for(i = 1 ; i <= 5 ; i++) {
+		stroke('gray')
+		line(x0 + division * i, y0 + tickSize, x0 + division * i, y0 - tickSize)
+		stroke('none')
+		text(rnd(tickNum * i), x0 + division * i - 3, y0 + tickSize * 4)
+	}
+
+	//y ticks
+	division = (y0 - yMax) / numTicks
+	tickNum = yScaleMax / numTicks
+	for(i = 1 ; i <= 5 ; i++) {
+		stroke('gray')
+		line(x0 + tickSize, y0 - division * i, x0 - tickSize, y0 - division * i)
+		stroke('none')
+		text(rnd(tickNum * i), x0 - tickSize * 4, y0 - division * i +3)
+	}
 }
 
 //these functions used to convert from coordinate x and y (as defined by x0, xMax, etc) 
@@ -144,4 +175,8 @@ function createCircleImage(img) {
 
 	photo.mask(maskImage)
 	return photo
+}
+
+function rnd(num) {
+	return Math.round(num * 10) / 10;
 }
