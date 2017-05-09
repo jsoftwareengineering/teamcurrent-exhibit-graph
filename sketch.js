@@ -3,10 +3,11 @@
 		totals given criteria for x and y plotting
 		hide exhibits given criteria
 		how to handle exhibit overlap
-		axis tick marks
 		how to store/decide what colors to make museums
 		legend for museum colors
 		tooltips for details
+
+		figure out load fonts
 */
 
 x0 = 0
@@ -26,8 +27,8 @@ function preload() {
 	table = loadTable('exhibits.csv', 'csv', 'header', function(table) {
 		for (i = 0 ; i < table.getRowCount() ; i++) {
 			var row = table.getRow(i)
-			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2),
-				row.getNum(3), row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7))
+			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2), 'images/'+i+'.jpg',
+				row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7), row.getNum(8))
 			
 			exhibit.fullImage = loadImage(exhibit.imageLink)
 			exhibitArray.push(exhibit)
@@ -77,6 +78,10 @@ function windowResized() {
 function draw() {
   
 }
+
+// ^^ sketch zone ^^
+//-------------------------------------------------------------------------------------------//
+// vv custom zone vv
 
 function calculate00AndMax() {
 	x0 = windowWidth / 4
@@ -130,11 +135,12 @@ function cY(y) {
 	return y0 - y*((y0 - yMax) / yScaleMax)
 }
 
-function Exhibit(museum, location, imageLink, interaction,
+function Exhibit(museum, location, name, imageLink, interaction,
 	learning, emotionalResponse, unpredictability, numberOfUsers) {
 
 	this.museum = museum
 	this.location = location 
+	this.name = name
 	this.imageLink = imageLink
 	this.interaction = interaction
 	this.learning = learning 

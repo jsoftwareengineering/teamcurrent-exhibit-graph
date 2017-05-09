@@ -1,3 +1,11 @@
-Musuem,Location (City),Exhibit Image (Link),Interaction (1-5),Learning (1-5),Emotional Response(1-5),Un-Predictability (1-5),# of Users,Average Score
-Natural History Museum,Funchal,images/IMG_5884.JPG,1,1,2,2,3,1.5
-Natural History Museum,Funchal,images/IMG_5844.JPG,1,2,1,2,4,1.5
+Musuem,Location (City),Exhibit Name,Exhibit Image (Link),Interaction (1-5),Learning (1-5),Emotional Response(1-5),Un-Predictability (1-5),# of Users,Average Score
+Natural History Museum,Funchal,Fish & Bird Display Cases,https://drive.google.com/open?id=0BxFXDQh8SZdlVi1wR1B4cnBTdmc,1,1,2,2,3,1.5
+Natural History Museum,Funchal,Laurissilva,https://drive.google.com/open?id=0BxFXDQh8SZdld3Frak5aLTNGYUk,1,2,1,2,4,1.5
+Museum of Childhood,Edinburgh,Dream Quilt,https://drive.google.com/open?id=0BxFXDQh8SZdlLXV6R1B6SENuYnM,4,3,4,2,5,3.25
+Museum of Childhood,Edinburgh,Children Playing,https://drive.google.com/open?id=0BxFXDQh8SZdlTGhoenZEWWJIaU0,1,3,2,1,5,1.75
+Museum of Childhood,Edinburgh,Haunted House,https://drive.google.com/open?id=0BxFXDQh8SZdlUGFHZUFzMHZTeU0,3,3,4,4,3,3.5
+Whale Museum,Canical,Whale Anatomy,https://drive.google.com/file/d/0BwXaGQ3VAQnnM0t0TlZzaEZVSFU/view?usp=sharing,4,2,1,2,1,2.25
+Whale Museum,Canical,Submarine Tour,https://drive.google.com/file/d/0BwXaGQ3VAQnnUUp4d1V3TWNkVlE/view?usp=sharing,1,3,3,2,5,2.25
+Whale Museum,Canical,Whale Oil Oven,https://drive.google.com/file/d/0BwXaGQ3VAQnnc0NnUDJfbll0LUE/view?usp=sharing,1,3,4,3,3,2.75
+Whale Museum,Canical,Whale Lookout,https://drive.google.com/file/d/0BwXaGQ3VAQnncHlET1B1YVhQalk/view?usp=sharing,5,3,3,2,5,3.25
+Whale Museum,Canical,Whale Audio Tour,https://drive.google.com/file/d/0BwXaGQ3VAQnnRGZ3bzNWOTNlNDQ/view?usp=sharing,1,5,2,1,1,2.25
