@@ -15,6 +15,7 @@ xMax = 0
 yMax = 0
 xScaleMax = 50
 yScaleMax = 50
+circleSize = 50
 exhibitArray = []
 var maskImage
 var cardo
@@ -61,23 +62,10 @@ function setup() {
 	calculate00AndMax()
 	drawAxes()
 	imageMode(CENTER)
-
-	noFill()
-	strokeWeight(15)
-	stroke('blue')
 	
+	plotExhibits()
 	
-	for(i = 0 ; i < exhibitArray.length ; i++) {
-		x = exhibitArray[i].totalX
-		y = exhibitArray[i].totalY
-
-		ellipse(cX(x) , cY(y) , 100, 100)
-		var photo = exhibitArray[i].circleImage
-		image(photo, cX(x), cY(y), photo.width,
-			photo.height)
-	}
-	var photo = exhibitArray[1].circleImage
-	
+	//var photo = exhibitArray[1].circleImage
 	//image(photo, cX(20), cY(20), photo.width, photo.height)
 	
 }
@@ -138,6 +126,25 @@ function drawAxes() {
 	}
 }
 
+function plotExhibits() {
+
+	noFill()
+	strokeWeight(circleSize / 6)
+	stroke('blue')
+	
+	for(i = 0 ; i < exhibitArray.length ; i++) {
+		x = exhibitArray[i].totalX
+		y = exhibitArray[i].totalY
+
+		
+		var photo = exhibitArray[i].circleImage
+
+		ellipse(cX(x) , cY(y) , circleSize, circleSize)
+		image(photo, cX(x), cY(y), photo.width,
+			photo.height)
+	}
+}
+
 //these functions used to convert from coordinate x and y (as defined by x0, xMax, etc) 
 //to p5 coordinate system
 function cX(x) {
@@ -164,6 +171,7 @@ function Exhibit(museum, location, name, imageLink, interaction,
 }
 
 function createCircleImage(img) {
+	
 	var photo = img
 	var width = photo.width
 	var height = photo.height
@@ -173,7 +181,7 @@ function createCircleImage(img) {
 	//take square from photo based on which side is longer (removing the extras) 
 	//allowing us to mask using the square shaped masking circle
 	if(width > height) {
-		photo.resize(0, 100)
+		photo.resize(0, circleSize)
 		width = photo.width
 		height = photo.height
 		dif = width - height
@@ -181,7 +189,7 @@ function createCircleImage(img) {
 		photo = photo.get(round(dif/2), 0, width - dif, height)		
 
 	} else if (height > width) {
-		photo.resize(100, 0)
+		photo.resize(circleSize, 0)
 		width = photo.width
 		height = photo.height
 		dif = height - width
