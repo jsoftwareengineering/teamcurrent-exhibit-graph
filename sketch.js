@@ -1,6 +1,5 @@
 /*
 	things to consider/do:
-		totals given criteria for x and y plotting
 		hide exhibits given criteria
 		how to handle exhibit overlap
 		how to store/decide what colors to make museums
@@ -15,17 +14,26 @@ y0 = 0
 xMax = 0
 yMax = 0
 xScaleMax = 50
-yScaleMax = 7
+yScaleMax = 50
 exhibitArray = []
 var maskImage
 var cardo
 var pathwayGothic
 
+//these arrays paralell, used in total calculations
+//could refactor to key value or something
+possibleCategories = ['interaction', 'learning', 'emotionalResponse',
+ 'unpredictability', 'numberOfUsers']
+xOnCategories = [true, true, true, true, true]
+yOnCategories = [true, true, true, true, true]
+
 function preload() {
 	//load all exhibits and images
 	maskImage = loadImage('images/mask.png')
+	//table = loadTable('exhibitsbugged.csv', 'csv', 'header', function(table) {
 	table = loadTable('exhibits.csv', 'csv', 'header', function(table) {
 		for (i = 0 ; i < table.getRowCount() ; i++) {
+			console.log(i + ' ok')
 			var row = table.getRow(i)
 			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2), 'images/'+i+'.jpg',
 				row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7), row.getNum(8))
@@ -46,6 +54,8 @@ function setup() {
 		exhibitArray[i].circleImage = createCircleImage(exhibitArray[i].fullImage)
 	}
 
+	calculateTotals()
+
 	createCanvas(windowWidth, windowHeight)
 	fill(0)
 	calculate00AndMax()
@@ -58,9 +68,12 @@ function setup() {
 	
 	
 	for(i = 0 ; i < exhibitArray.length ; i++) {
-		ellipse(cX(i) , cY(i) , 100, 100)
+		x = exhibitArray[i].totalX
+		y = exhibitArray[i].totalY
+
+		ellipse(cX(x) , cY(y) , 100, 100)
 		var photo = exhibitArray[i].circleImage
-		image(photo, cX(i), cY(i), photo.width,
+		image(photo, cX(x), cY(y), photo.width,
 			photo.height)
 	}
 	var photo = exhibitArray[1].circleImage
@@ -176,11 +189,39 @@ function createCircleImage(img) {
 		photo = photo.get(0, round(dif/2), width, height - dif)
 	}
 
-	//alert('w: ' + width + ' h: ' + height + ' dif: ' + dif)
-	//alert('w: ' + photo.width + ' h: ' + photo.height)
+	//console.log('w: ' + width + ' h: ' + height + ' dif: ' + dif)
+	//console.log('w: ' + photo.width + ' h: ' + photo.height)
 
 	photo.mask(maskImage)
 	return photo
+}
+
+function calculateTotals() {
+	xScaleMax = 0
+	yScaleMax = 0
+	for(i = 0 ; i < exhibitArray.length ; i++) {
+		exhibitArray[i].totalX = 0
+		exhibitArray[i].totalY = 0
+		
+		//find total using criteria
+		for(j = 0 ; j < possibleCategories.length ; j++) {
+			if(xOnCategories[j]) {
+				exhibitArray[i].totalX += exhibitArray[i][possibleCategories[j]]
+			}
+			if(yOnCategories[j]) {
+				exhibitArray[i].totalY += exhibitArray[i][possibleCategories[j]]
+			}
+		}
+
+		//check to see if there are new max
+		if(exhibitArray[i].totalX > xScaleMax) {
+			xScaleMax = exhibitArray[i].totalX
+		}
+
+		if(exhibitArray[i].totalY > yScaleMax) {
+			yScaleMax = exhibitArray[i].totalY
+		}
+	}
 }
 
 function rnd(num) {
