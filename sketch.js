@@ -13,8 +13,8 @@ x0 = 0
 y0 = 0
 xMax = 0
 yMax = 0
-xScaleMax = 50
-yScaleMax = 50
+xScaleMax = 0
+yScaleMax = 0
 circleSize = 50
 exhibitArray = []
 var maskImage
@@ -25,8 +25,8 @@ var pathwayGothic
 //could refactor to key value or something
 possibleCategories = ['interaction', 'learning', 'emotionalResponse',
  'unpredictability', 'numberOfUsers']
-xOnCategories = [true, true, true, true, true]
-yOnCategories = [true, true, true, true, true]
+xOnCategories = [true, true, true, true, false]
+yOnCategories = [true, true, true, true, false]
 
 function preload() {
 	//load all exhibits and images
@@ -34,12 +34,12 @@ function preload() {
 	//table = loadTable('exhibitsbugged.csv', 'csv', 'header', function(table) {
 	table = loadTable('exhibits.csv', 'csv', 'header', function(table) {
 		for (i = 0 ; i < table.getRowCount() ; i++) {
-			console.log(i + ' ok')
 			var row = table.getRow(i)
 			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2), 'images/'+i+'.jpg',
 				row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7), row.getNum(8))
 			
 			exhibit.fullImage = loadImage(exhibit.imageLink)
+			//console.log(i + ' ok')
 			exhibitArray.push(exhibit)
 		}		
 	})
@@ -55,14 +55,13 @@ function setup() {
 		exhibitArray[i].circleImage = createCircleImage(exhibitArray[i].fullImage)
 	}
 
-	calculateTotals()
+	imageMode(CENTER)
 
+	calculateExhibitTotals()
 	createCanvas(windowWidth, windowHeight)
 	fill(0)
 	calculate00AndMax()
 	drawAxes()
-	imageMode(CENTER)
-	
 	plotExhibits()
 	
 	//var photo = exhibitArray[1].circleImage
@@ -204,7 +203,7 @@ function createCircleImage(img) {
 	return photo
 }
 
-function calculateTotals() {
+function calculateExhibitTotals() {
 	xScaleMax = 0
 	yScaleMax = 0
 	for(i = 0 ; i < exhibitArray.length ; i++) {
