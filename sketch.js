@@ -21,6 +21,10 @@ var maskImage
 var cardo
 var pathwayGothic
 
+//poorly named checkbox arrays
+checkX = []
+checkY = []
+
 //these arrays paralell, used in total calculations
 //could refactor to key value or something
 possibleCategories = ['interaction', 'learning', 'emotionalResponse',
@@ -55,6 +59,9 @@ function setup() {
 		exhibitArray[i].circleImage = createCircleImage(exhibitArray[i].fullImage)
 	}
 
+	//gui = createGui('x controls');
+	//gui.addGlobals('xOnCategories[0]', 'yOnCategories');
+
 	imageMode(CENTER)
 
 	calculateExhibitTotals()
@@ -63,7 +70,9 @@ function setup() {
 	calculate00AndMax()
 	drawAxes()
 	plotExhibits()
-	
+
+	setupCheckBoxes()
+
 	//var photo = exhibitArray[1].circleImage
 	//image(photo, cX(20), cY(20), photo.width, photo.height)
 	
@@ -73,6 +82,8 @@ function windowResized() {
 	resizeCanvas(windowWidth, windowHeight)
 	calculate00AndMax()
 	drawAxes()
+	positionCheckBoxes()
+	plotExhibits()
 }
 
 function draw() {
@@ -169,6 +180,48 @@ function Exhibit(museum, location, name, imageLink, interaction,
 
 }
 
+function checkBoxChanged(xOrY, index) {
+	console.log(xOrY + ' ' + index)
+	if(xOrY === 'x') {
+		xOnCategories[index] = !xOnCategories[index]
+	} else if(xOrY === 'y') {
+		yOnCategories[index] = !yOnCategories[index]
+	}
+	clear()
+	calculateExhibitTotals()
+	drawAxes()
+	plotExhibits()
+}
+
+function calculateExhibitTotals() {
+	xScaleMax = 0
+	yScaleMax = 0
+	for(i = 0 ; i < exhibitArray.length ; i++) {
+		exhibitArray[i].totalX = 0
+		exhibitArray[i].totalY = 0
+		
+		//find total using criteria
+		for(j = 0 ; j < possibleCategories.length ; j++) {
+			if(xOnCategories[j]) {
+				console.log(possibleCategories[j] + ': ' + exhibitArray[i][possibleCategories[j]])
+				exhibitArray[i].totalX += exhibitArray[i][possibleCategories[j]]
+			}
+			if(yOnCategories[j]) {
+				exhibitArray[i].totalY += exhibitArray[i][possibleCategories[j]]
+			}
+		}
+
+		//check to see if there are new max
+		if(exhibitArray[i].totalX > xScaleMax) {
+			xScaleMax = exhibitArray[i].totalX
+		}
+
+		if(exhibitArray[i].totalY > yScaleMax) {
+			yScaleMax = exhibitArray[i].totalY
+		}
+	}
+}
+
 function createCircleImage(img) {
 	
 	var photo = img
@@ -203,31 +256,33 @@ function createCircleImage(img) {
 	return photo
 }
 
-function calculateExhibitTotals() {
-	xScaleMax = 0
-	yScaleMax = 0
-	for(i = 0 ; i < exhibitArray.length ; i++) {
-		exhibitArray[i].totalX = 0
-		exhibitArray[i].totalY = 0
-		
-		//find total using criteria
-		for(j = 0 ; j < possibleCategories.length ; j++) {
-			if(xOnCategories[j]) {
-				exhibitArray[i].totalX += exhibitArray[i][possibleCategories[j]]
-			}
-			if(yOnCategories[j]) {
-				exhibitArray[i].totalY += exhibitArray[i][possibleCategories[j]]
-			}
-		}
+function setupCheckBoxes() {
 
-		//check to see if there are new max
-		if(exhibitArray[i].totalX > xScaleMax) {
-			xScaleMax = exhibitArray[i].totalX
-		}
+	for(i = 0 ; i < possibleCategories.length ; i++) {
+		checkX[i] = createCheckbox(possibleCategories[i], xOnCategories[i]);
+		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
 
-		if(exhibitArray[i].totalY > yScaleMax) {
-			yScaleMax = exhibitArray[i].totalY
-		}
+		checkY[i] = createCheckbox(possibleCategories[i], yOnCategories[i]);
+		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
+	}
+
+	checkX[0].changed(function() {checkBoxChanged('x', 0)})
+	checkX[1].changed(function() {checkBoxChanged('x', 1)})
+	checkX[2].changed(function() {checkBoxChanged('x', 2)})
+	checkX[3].changed(function() {checkBoxChanged('x', 3)})
+	checkX[4].changed(function() {checkBoxChanged('x', 4)})
+
+	checkY[0].changed(function() {checkBoxChanged('y', 0)})
+	checkY[1].changed(function() {checkBoxChanged('y', 1)})
+	checkY[2].changed(function() {checkBoxChanged('y', 2)})
+	checkY[3].changed(function() {checkBoxChanged('y', 3)})
+	checkY[4].changed(function() {checkBoxChanged('y', 4)})
+}
+
+function positionCheckBoxes() {
+	for(i = 0 ; i < checkX.length ; i++) {
+		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
+		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
 	}
 }
 
