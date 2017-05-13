@@ -1,9 +1,8 @@
 /*
 	things to consider/do:
-		hide exhibits given criteria
 		how to handle exhibit overlap	right now, just random jitter
-		legend for museum colors
 		tooltips for details
+		weight sliders?
 */
 
 x0 = 0
