@@ -45,6 +45,7 @@ colorsArray = ['#C09167','#ABE5D0', '#D79143', '#AD6463', '#484870', '#987E6D', 
 museumsArray = []
 museumsOnArray = []
 museumLabels = []
+circleClickPositions = []
 
 function preload() {
 	//load all exhibits and images
@@ -118,6 +119,16 @@ function windowResized() {
 
 function draw() {
   
+}
+
+function mouseClicked() {
+	for(i=0 ; i<circleClickPositions.length ; i++) {
+		if(circleClickPositions[i].checkClicked(mouseX, mouseY)) {
+			//console.log(museumsArray[i] + ' clicked')
+			museumsOnArray[i] = !museumsOnArray[i]
+			windowResized()
+		}
+	}
 }
 
 // ^^ sketch zone ^^
@@ -229,6 +240,19 @@ function Exhibit(museum, location, name, imageLink, interaction,
 	this.emotionalResponse = emotionalResponse
 	this.unpredictability = unpredictability
 	this.numberOfUsers = numberOfUsers
+
+}
+
+function Circle(x, y, diameter) {
+
+	this.x = x
+	this.y = y 
+	this.width = width 
+	this.height = height
+
+	this.checkClicked = function(mouseX, mouseY) {
+		return collidePointCircle(mouseX, mouseY, x, y, diameter);
+	}
 
 }
 
@@ -404,6 +428,7 @@ function setupMuseums() {
 }
 
 function positionMuseums() {
+	circleClickPositions = []
 	museumsTitle.position(20, yMax - 40)
 	museumsCircleSize = (yAxisTitleYPosition - yMax - windowHeight/100 * museumsArray.length) / museumsArray.length
 	strokeWeight(museumsCircleSize / 9)
@@ -411,12 +436,13 @@ function positionMuseums() {
 		if(museumsOnArray[i]) {
 			fill(colorsArray[i])
 		} else {
-			fill(none)
+			noFill()
 		}
 		stroke(colorsArray[i])
 		circleX = 20 + circleSize/2
 		circleY = yMax+(museumsCircleSize + 5)*(i+1)
 		ellipse(circleX, circleY, museumsCircleSize, museumsCircleSize)
+		circleClickPositions.push(new Circle(circleX, circleY, museumsCircleSize))
 		museumLabels[i].position(20+circleSize + museumsCircleSize/9, circleY - 18)	
 	}
 	
