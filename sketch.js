@@ -2,11 +2,8 @@
 	things to consider/do:
 		hide exhibits given criteria
 		how to handle exhibit overlap	right now, just random jitter
-		how to store/decide what colors to make museums
 		legend for museum colors
 		tooltips for details
-
-		figure out load fonts
 */
 
 x0 = 0
@@ -21,6 +18,12 @@ var maskImage
 var cardo
 var pathwayGothic
 
+//html text elements
+var title
+var subtitle
+xAxisNumbers = []
+yAxisNumbers = []
+
 //poorly named checkbox arrays
 checkX = []
 checkY = []
@@ -29,8 +32,10 @@ checkY = []
 //could refactor to key value or something
 possibleCategories = ['interaction', 'learning', 'emotionalResponse',
  'unpredictability', 'numberOfUsers']
-xOnCategories = [true, true, true, true, false]
-yOnCategories = [true, true, true, true, false]
+xOnCategories = [false, false, true, true, false]
+yOnCategories = [false, true, false, false, false]
+formattedCategories =['Interaction', 'Learning', 'Emotional Response',
+ 'Unpredictability', '# of Users']
 
 colorsArray = ['#C09167','#ABE5D0', '#D79143', '#AD6463', '#484870', '#987E6D', '#194423', '#639E4A', '#298394', '#94DAF6']
 museumsArray = []
@@ -69,9 +74,6 @@ function setup() {
 		exhibitArray[i].circleImage = createCircleImage(exhibitArray[i].fullImage)
 	}
 
-	//gui = createGui('x controls');
-	//gui.addGlobals('xOnCategories[0]', 'yOnCategories');
-
 	imageMode(CENTER)
 
 	calculateExhibitTotals()
@@ -82,6 +84,12 @@ function setup() {
 	plotExhibits()
 
 	setupCheckBoxes()
+
+	title = createElement('h1','Exhibit Graph');
+	subtitle = createElement('p','<b>Comparing factor, factor, factor, factor </b>to <b>factor factor factor factor</b>');
+	
+	positionHTMLText()
+	makeSubtitleText()
 
 	//var photo = exhibitArray[1].circleImage
 	//image(photo, cX(20), cY(20), photo.width, photo.height)
@@ -94,6 +102,7 @@ function windowResized() {
 	drawAxes()
 	positionCheckBoxes()
 	plotExhibits()
+	positionHTMLText()
 }
 
 function draw() {
@@ -123,16 +132,31 @@ function drawAxes() {
 	var tickSize = 5
 	var numTicks = 5
 
+	if(xAxisNumbers.length != numTicks) {
+		xAxisNumbers = []
+		for(i=0 ; i<numTicks ; i++) {
+			xAxisNumbers.push(createElement('p','0'))	
+		}
+	}
+
+	if(yAxisNumbers.length != numTicks) {
+		yAxisNumbers = []
+		for(i=0 ; i<numTicks ; i++) {
+			yAxisNumbers.push(createElement('p','0'))	
+		}
+	}
+
 	//x ticks and labels
 	var division = (xMax - x0) / numTicks
 	var tickNum = xScaleMax / numTicks
 	textFont('Cardo')	
 	fill('gray')
-	for(i = 1 ; i <= 5 ; i++) {
+	for(i = 1 ; i <= numTicks ; i++) {
 		stroke(51)
 		line(x0 + division * i, y0 + tickSize, x0 + division * i, y0 - tickSize)
 		stroke('none')
-		text(rnd(tickNum * i), x0 + division * i - 3, y0 + tickSize * 4)
+		xAxisNumbers[i-1].html(rnd(tickNum * i))
+		xAxisNumbers[i-1].position(x0 + division * i - 3, y0 + tickSize)
 	}
 
 	//y ticks
@@ -142,7 +166,8 @@ function drawAxes() {
 		stroke('gray')
 		line(x0 + tickSize, y0 - division * i, x0 - tickSize, y0 - division * i)
 		stroke('none')
-		text(rnd(tickNum * i), x0 - tickSize * 4, y0 - division * i +3)
+		yAxisNumbers[i-1].html(rnd(tickNum * i))
+		yAxisNumbers[i-1].position(x0 - tickSize * 6, y0 - division * (i+.3))
 	}
 }
 
@@ -207,6 +232,7 @@ function checkBoxChanged(xOrY, index) {
 	calculateExhibitTotals()
 	drawAxes()
 	plotExhibits()
+	makeSubtitleText()
 }
 
 function calculateExhibitTotals() {
@@ -275,10 +301,10 @@ function createCircleImage(img) {
 function setupCheckBoxes() {
 
 	for(i = 0 ; i < possibleCategories.length ; i++) {
-		checkX[i] = createCheckbox(possibleCategories[i], xOnCategories[i]);
+		checkX[i] = createCheckbox(formattedCategories[i], xOnCategories[i]);
 		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
 
-		checkY[i] = createCheckbox(possibleCategories[i], yOnCategories[i]);
+		checkY[i] = createCheckbox(formattedCategories[i], yOnCategories[i]);
 		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
 	}
 
@@ -300,6 +326,54 @@ function positionCheckBoxes() {
 		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
 		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
 	}
+}
+
+function positionHTMLText() {
+	title.position(x0,10)
+	subtitle.position(x0+160, 30)
+}
+
+function makeSubtitleText() {
+	subText = 'Comparing <b>'
+	subText += makeSubtitleTextForCat(yOnCategories)
+	subText += '</b> to <b>'
+	subText += makeSubtitleTextForCat(xOnCategories)
+	subText += '</br>'
+	subtitle.html(subText)
+}
+
+function makeSubtitleTextForCat(categories) {
+	first = true
+	foundIndeces = []
+	subText = ''
+
+	//find all indexes we need to write category name for
+	for(i=0 ; i<categories.length ; i++) {
+		if(categories[i]) {
+			foundIndeces.push(i)
+		}
+	}
+
+	//logic for commas and 'and'
+	if(foundIndeces.length === 0) {
+		subText += 'Nothing'
+	} else if(foundIndeces.length === 1) {
+		subText += formattedCategories[foundIndeces[0]]
+	} else if(foundIndeces.length === 2) {
+		subText += formattedCategories[foundIndeces[0]] + ' and ' +  formattedCategories[foundIndeces[1]]
+	} else {
+		for(i=0 ; i<foundIndeces.length-1 ; i++) {
+			if(first) {
+				subText += formattedCategories[foundIndeces[i]]
+				first = false	
+			} else {
+				subText += ', ' + formattedCategories[foundIndeces[i]]
+			}
+		}
+		subText += ', and ' + formattedCategories[foundIndeces[foundIndeces.length-1]]
+	}
+
+	return subText
 }
 
 function rnd(num) {

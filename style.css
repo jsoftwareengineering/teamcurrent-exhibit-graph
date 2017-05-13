@@ -1,0 +1,41 @@
+body {
+	font-family: 'Cardo', serif;
+}
+
+h1 {
+	font-family: 'Pathway Gothic One', sans-serif;
+}
+
+h2 {
+	font-family: 'Pathway Gothic One', sans-serif;
+}
+
+input[type=checkbox] {
+							position:absolute; z-index:-1000; left:-1000px; overflow: hidden; clip: rect(0 0 0 0); height:1px; width:1px; margin:-1px; padding:0; border:0;
+						}
+
+						input[type=checkbox] + label {
+							padding-left:30px;
+							height:12px; 
+							display:inline-block;
+							line-height:12px;
+							background-repeat:no-repeat;
+							background-position: 0 0;
+							font-size:12px;
+							vertical-align:middle;
+							cursor:pointer;
+
+						}
+
+						input[type=checkbox]:checked + label {
+							background-position: 0 -12px;
+						}
+						label {
+				background-image:url(/images/check.png);
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
