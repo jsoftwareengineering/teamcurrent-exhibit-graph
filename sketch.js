@@ -188,7 +188,7 @@ function drawAxes() {
 		line(x0 + tickSize, y0 - division * i, x0 - tickSize, y0 - division * i)
 		stroke('none')
 		yAxisNumbers[i-1].html(rnd(tickNum * i))
-		yAxisNumbers[i-1].position(x0 - tickSize * 6, y0 - division * (i+.3))
+		yAxisNumbers[i-1].position(x0 - tickSize * 6, y0 - division * (i+.23))
 	}
 }
 
