@@ -1,7 +1,7 @@
 /*
 	things to consider/do:
 		hide exhibits given criteria
-		how to handle exhibit overlap
+		how to handle exhibit overlap	right now, just random jitter
 		how to store/decide what colors to make museums
 		legend for museum colors
 		tooltips for details
@@ -15,7 +15,7 @@ xMax = 0
 yMax = 0
 xScaleMax = 0
 yScaleMax = 0
-circleSize = 50
+circleSize = 40
 exhibitArray = []
 var maskImage
 var cardo
@@ -32,6 +32,10 @@ possibleCategories = ['interaction', 'learning', 'emotionalResponse',
 xOnCategories = [true, true, true, true, false]
 yOnCategories = [true, true, true, true, false]
 
+colorsArray = ['#C09167','#ABE5D0', '#D79143', '#AD6463', '#484870', '#987E6D', '#194423', '#639E4A', '#298394', '#94DAF6']
+museumsArray = []
+museumsOnArray = []
+
 function preload() {
 	//load all exhibits and images
 	maskImage = loadImage('images/mask.png')
@@ -41,6 +45,12 @@ function preload() {
 			var row = table.getRow(i)
 			var exhibit = new Exhibit(row.getString(0), row.getString(1), row.getString(2), 'images/'+i+'.jpg',
 				row.getNum(4), row.getNum(5), row.getNum(6), row.getNum(7), row.getNum(8))
+
+			if(museumsArray.indexOf(row.getString(0)) == -1) {
+				museumsArray.push(row.getString(0))
+				museumsOnArray.push(true)
+				//console.log(row.getString(0) + ' ' + museumsArray.length)
+			}
 			
 			exhibit.fullImage = loadImage(exhibit.imageLink)
 			//console.log(i + ' ok')
@@ -103,7 +113,7 @@ function calculate00AndMax() {
 
 function drawAxes() {
 	strokeWeight(3)
-	stroke('gray')
+	stroke(51)
 
 	//x axis
 	line(x0,  y0,  xMax, y0)	
@@ -119,7 +129,7 @@ function drawAxes() {
 	textFont('Cardo')	
 	fill('gray')
 	for(i = 1 ; i <= 5 ; i++) {
-		stroke('gray')
+		stroke(51)
 		line(x0 + division * i, y0 + tickSize, x0 + division * i, y0 - tickSize)
 		stroke('none')
 		text(rnd(tickNum * i), x0 + division * i - 3, y0 + tickSize * 4)
@@ -140,18 +150,24 @@ function plotExhibits() {
 
 	noFill()
 	strokeWeight(circleSize / 6)
-	stroke('blue')
 	
 	for(i = 0 ; i < exhibitArray.length ; i++) {
-		x = exhibitArray[i].totalX
-		y = exhibitArray[i].totalY
+		m = exhibitArray[i].museum
+		j = museumsArray.indexOf(m)
 
+		if(museumsOnArray[j]) {
+			x = cX(exhibitArray[i].totalX) + random (-30, 30)
+			y = cY(exhibitArray[i].totalY) + random (-30, 30)
+
+			
+			var photo = exhibitArray[i].circleImage
+			stroke(colorsArray[museumsArray.indexOf(exhibitArray[i].museum)])
+
+			ellipse(x , y , circleSize, circleSize)
+			image(photo, x, y, photo.width,
+				photo.height)	
+		}
 		
-		var photo = exhibitArray[i].circleImage
-
-		ellipse(cX(x) , cY(y) , circleSize, circleSize)
-		image(photo, cX(x), cY(y), photo.width,
-			photo.height)
 	}
 }
 
@@ -181,7 +197,7 @@ function Exhibit(museum, location, name, imageLink, interaction,
 }
 
 function checkBoxChanged(xOrY, index) {
-	console.log(xOrY + ' ' + index)
+	//console.log(xOrY + ' ' + index)
 	if(xOrY === 'x') {
 		xOnCategories[index] = !xOnCategories[index]
 	} else if(xOrY === 'y') {
@@ -203,7 +219,7 @@ function calculateExhibitTotals() {
 		//find total using criteria
 		for(j = 0 ; j < possibleCategories.length ; j++) {
 			if(xOnCategories[j]) {
-				console.log(possibleCategories[j] + ': ' + exhibitArray[i][possibleCategories[j]])
+				//console.log(possibleCategories[j] + ': ' + exhibitArray[i][possibleCategories[j]])
 				exhibitArray[i].totalX += exhibitArray[i][possibleCategories[j]]
 			}
 			if(yOnCategories[j]) {
