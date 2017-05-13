@@ -23,6 +23,8 @@ var title
 var subtitle
 var xFactorsTitle
 var yFactorsTitle
+var yAxisTitleYPosition
+var museumsTitle
 xAxisNumbers = []
 yAxisNumbers = []
 
@@ -80,9 +82,10 @@ function setup() {
 	imageMode(CENTER)
 
 	title = createElement('h1','Exhibit Graph')
-	subtitle = createElement('p','<b>Comparing factor, factor, factor, factor </b>to <b>factor factor factor factor</b>')
+	subtitle = createElement('h3','<b>Comparing factor, factor, factor, factor </b>to <b>factor factor factor factor</b>')
 	xFactorsTitle = createElement('h2', 'X Axis Factors')
 	yFactorsTitle = createElement('h2', 'Y Axis Factors')
+	museumsTitle = createElement('h2', 'Museums')
 
 	calculateExhibitTotals()
 	createCanvas(windowWidth, windowHeight)
@@ -96,6 +99,8 @@ function setup() {
 	positionHTMLText()
 	makeSubtitleText()
 
+	setupMuseums()
+
 	//var photo = exhibitArray[1].circleImage
 	//image(photo, cX(20), cY(20), photo.width, photo.height)
 	
@@ -108,6 +113,7 @@ function windowResized() {
 	positionCheckBoxes()
 	plotExhibits()
 	positionHTMLText()
+	positionMuseums()
 }
 
 function draw() {
@@ -238,6 +244,7 @@ function checkBoxChanged(xOrY, index) {
 	drawAxes()
 	plotExhibits()
 	makeSubtitleText()
+	positionMuseums()
 }
 
 function calculateExhibitTotals() {
@@ -337,7 +344,8 @@ function positionCheckBoxes() {
 		checkY[checkY.length-i-1].position(20, y0 - windowHeight/30 * (i))
 		lastY = y0 - windowHeight/30 * (i)
 	}
-	yFactorsTitle.position(20, lastY - 50)
+	yAxisTitleYPosition = lastY - 50
+	yFactorsTitle.position(20, yAxisTitleYPosition)
 }
 
 function positionHTMLText() {
@@ -386,6 +394,33 @@ function makeSubtitleTextForCat(categories) {
 	}
 
 	return subText
+}
+
+function setupMuseums() {
+	for(i=0 ; i<museumsArray.length ; i++) {
+		museumLabels.push(createElement('p', museumsArray[i]))
+	}
+	positionMuseums()
+}
+
+function positionMuseums() {
+	museumsTitle.position(20, yMax - 40)
+	museumsCircleSize = (yAxisTitleYPosition - yMax - windowHeight/100 * museumsArray.length) / museumsArray.length
+	strokeWeight(museumsCircleSize / 9)
+	for(i=0 ; i<museumsArray.length ; i++) {
+		if(museumsOnArray[i]) {
+			fill(colorsArray[i])
+		} else {
+			fill(none)
+		}
+		stroke(colorsArray[i])
+		circleX = 20 + circleSize/2
+		circleY = yMax+(museumsCircleSize + 5)*(i+1)
+		ellipse(circleX, circleY, museumsCircleSize, museumsCircleSize)
+		museumLabels[i].position(20+circleSize + museumsCircleSize/9, circleY - 18)	
+	}
+	
+
 }
 
 function rnd(num) {
