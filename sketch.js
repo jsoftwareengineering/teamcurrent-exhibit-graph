@@ -21,6 +21,8 @@ var pathwayGothic
 //html text elements
 var title
 var subtitle
+var xFactorsTitle
+var yFactorsTitle
 xAxisNumbers = []
 yAxisNumbers = []
 
@@ -40,6 +42,7 @@ formattedCategories =['Interaction', 'Learning', 'Emotional Response',
 colorsArray = ['#C09167','#ABE5D0', '#D79143', '#AD6463', '#484870', '#987E6D', '#194423', '#639E4A', '#298394', '#94DAF6']
 museumsArray = []
 museumsOnArray = []
+museumLabels = []
 
 function preload() {
 	//load all exhibits and images
@@ -76,6 +79,11 @@ function setup() {
 
 	imageMode(CENTER)
 
+	title = createElement('h1','Exhibit Graph')
+	subtitle = createElement('p','<b>Comparing factor, factor, factor, factor </b>to <b>factor factor factor factor</b>')
+	xFactorsTitle = createElement('h2', 'X Axis Factors')
+	yFactorsTitle = createElement('h2', 'Y Axis Factors')
+
 	calculateExhibitTotals()
 	createCanvas(windowWidth, windowHeight)
 	fill(0)
@@ -85,9 +93,6 @@ function setup() {
 
 	setupCheckBoxes()
 
-	title = createElement('h1','Exhibit Graph');
-	subtitle = createElement('p','<b>Comparing factor, factor, factor, factor </b>to <b>factor factor factor factor</b>');
-	
 	positionHTMLText()
 	makeSubtitleText()
 
@@ -114,7 +119,7 @@ function draw() {
 // vv custom zone vv
 
 function calculate00AndMax() {
-	x0 = windowWidth / 4
+	x0 = windowWidth / 5
 	y0 = windowHeight / 5 * 4
 	xMax = windowWidth / 7 * 6
 	yMax = windowHeight / 6
@@ -302,11 +307,10 @@ function setupCheckBoxes() {
 
 	for(i = 0 ; i < possibleCategories.length ; i++) {
 		checkX[i] = createCheckbox(formattedCategories[i], xOnCategories[i]);
-		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
-
 		checkY[i] = createCheckbox(formattedCategories[i], yOnCategories[i]);
-		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
 	}
+
+	positionCheckBoxes()
 
 	checkX[0].changed(function() {checkBoxChanged('x', 0)})
 	checkX[1].changed(function() {checkBoxChanged('x', 1)})
@@ -322,10 +326,18 @@ function setupCheckBoxes() {
 }
 
 function positionCheckBoxes() {
+	xFactorsTitle.position(x0 - 130, windowHeight/32 * 27)
 	for(i = 0 ; i < checkX.length ; i++) {
-		checkX[i].position(windowWidth/6 * (i + 1), windowHeight/8 * 7);
-		checkY[i].position(10, windowHeight/20 * (i) + windowHeight / 2);
+		checkX[i].position(x0 + windowWidth/8 * i , windowHeight/32 * 29)
+		
 	}
+	
+	var lastY
+	for(i=0 ; i < checkY.length ; i++) {
+		checkY[checkY.length-i-1].position(20, y0 - windowHeight/30 * (i))
+		lastY = y0 - windowHeight/30 * (i)
+	}
+	yFactorsTitle.position(20, lastY - 50)
 }
 
 function positionHTMLText() {
