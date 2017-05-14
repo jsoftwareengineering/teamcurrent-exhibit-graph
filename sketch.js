@@ -92,6 +92,7 @@ function setup() {
 	fill(0)
 	calculate00AndMax()
 	drawAxes()
+	
 	plotExhibits()
 
 	setupCheckBoxes()
@@ -142,6 +143,7 @@ function calculate00AndMax() {
 }
 
 function drawAxes() {
+	setShadow(0, 0, 0, "rgba(0,0,0,0.55)")
 	strokeWeight(3)
 	stroke(51)
 
@@ -194,6 +196,7 @@ function drawAxes() {
 
 function plotExhibits() {
 
+	setShadow(5,5,10,"rgba(0,0,0,0.55)")
 	noFill()
 	strokeWeight(circleSize / 6)
 	
@@ -434,18 +437,25 @@ function positionMuseums() {
 	for(i=0 ; i<museumsArray.length ; i++) {
 		if(museumsOnArray[i]) {
 			fill(colorsArray[i])
+			noStroke()
 		} else {
 			noFill()
+			stroke(colorsArray[i])
 		}
-		stroke(colorsArray[i])
-		circleX = 20 + circleSize/2
+		
+		circleX = 20 + museumsCircleSize/2
 		circleY = yMax+(museumsCircleSize + 5)*(i+1)
 		ellipse(circleX, circleY, museumsCircleSize, museumsCircleSize)
 		circleClickPositions.push(new Circle(circleX, circleY, museumsCircleSize))
-		museumLabels[i].position(20+circleSize + museumsCircleSize/9, circleY - 18)	
+		museumLabels[i].position(25+museumsCircleSize + museumsCircleSize/9, circleY - 18)	
 	}
-	
+}
 
+function setShadow(x, y, blur, color) {
+	drawingContext.shadowBlur = blur;
+	drawingContext.shadowColor = color;
+	drawingContext.shadowOffsetX = x;
+	drawingContext.shadowOffSetY = y;
 }
 
 function rnd(num) {
