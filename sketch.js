@@ -141,7 +141,7 @@ function mouseClicked() {
 
 		//iterate through potential clicked exhibits and change text, show modal
 		modalText = ''
-		for(i = 0 ; i < exhibitArray.length ; i++) {
+		for(i = exhibitArray.length-1 ; i >= 0 ; i--) {
 			m = exhibitArray[i].museum
 			j = museumsArray.indexOf(m)
 
