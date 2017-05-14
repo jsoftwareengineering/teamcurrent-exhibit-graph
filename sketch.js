@@ -27,6 +27,9 @@ var museumsTitle
 xAxisNumbers = []
 yAxisNumbers = []
 
+var modalBody
+var modalShowing = false //needed because html onclick fires before p5
+
 //poorly named checkbox arrays
 checkX = []
 checkY = []
@@ -86,6 +89,7 @@ function setup() {
 	xFactorsTitle = createElement('h2', 'X Axis Factors')
 	yFactorsTitle = createElement('h2', 'Y Axis Factors')
 	museumsTitle = createElement('h2', 'Museums')
+	modalBody = selectAll('.modal-body')
 
 	calculateExhibitTotals()
 	createCanvas(windowWidth, windowHeight)
@@ -122,13 +126,41 @@ function draw() {
 }
 
 function mouseClicked() {
-	for(i=0 ; i<circleClickPositions.length ; i++) {
-		if(circleClickPositions[i].checkClicked(mouseX, mouseY)) {
-			//console.log(museumsArray[i] + ' clicked')
-			museumsOnArray[i] = !museumsOnArray[i]
-			windowResized()
+	//ignore clicks to exhibits or museums if modal is showing
+	//console.log(modal.style.display)
+	if(!modalShowing) {
+
+		//check to see if museums clicked
+		for(i=0 ; i<circleClickPositions.length ; i++) {
+			if(circleClickPositions[i].checkClicked(mouseX, mouseY)) {
+				//console.log(museumsArray[i] + ' clicked')
+				museumsOnArray[i] = !museumsOnArray[i]
+				windowResized()
+			}
 		}
-	}
+
+		//iterate through potential clicked exhibits and change text, show modal
+		modalText = ''
+		for(i = 0 ; i < exhibitArray.length ; i++) {
+			m = exhibitArray[i].museum
+			j = museumsArray.indexOf(m)
+
+			if(museumsOnArray[j] && exhibitArray[i].collisionCircle.checkClicked(mouseX, mouseY)) {
+				console.log(exhibitArray[i].name)
+				modalText += createModalHTML(exhibitArray[i])
+				modalShowing = true
+			}
+		}
+		//if we clicked an exhibit in the exhibit for loop
+		if(modalShowing) {
+			modalText += '<div style="padding-top:90px"></div>'
+			modalBody[0].html(modalText)
+			modal.style.display = 'block'
+		}
+	} else {modalShowing = !modalShowing} 	//TODO
+											//very hacky, works unless user clicks an even
+											//non 0 number of times in modal 
+	
 }
 
 // ^^ sketch zone ^^
@@ -207,6 +239,7 @@ function plotExhibits() {
 			x = cX(exhibitArray[i].totalX) + random (-30, 30)
 			y = cY(exhibitArray[i].totalY) + random (-30, 30)
 
+			exhibitArray[i].collisionCircle = new Circle(x, y, circleSize)
 			
 			var photo = exhibitArray[i].circleImage
 			stroke(colorsArray[museumsArray.indexOf(exhibitArray[i].museum)])
@@ -248,8 +281,7 @@ function Circle(x, y, diameter) {
 
 	this.x = x
 	this.y = y 
-	this.width = width 
-	this.height = height
+	this.diameter = diameter
 
 	this.checkClicked = function(mouseX, mouseY) {
 		return collidePointCircle(mouseX, mouseY, x, y, diameter);
@@ -448,6 +480,25 @@ function positionMuseums() {
 		circleClickPositions.push(new Circle(circleX, circleY, museumsCircleSize))
 		museumLabels[i].position(25+museumsCircleSize + museumsCircleSize/9, circleY - 18)	
 	}
+}
+
+function createModalHTML(exhibit) {
+	t = ''
+	t += '<h2 class="modal-subhead">' + exhibit.name + '</h2>'
+	t+= '<div style="float: left; width: 40%;">'
+	t += '<h3 class="modal-text">Museum: <b>' + exhibit.museum + '</b></h3>'
+	t += '<h3 class="modal-text">Location: <b>' + exhibit.location + '</b></h3>'
+	t += '<h3 class="modal-text">Interaction: <b>' + exhibit.interaction + '</b></h3>'
+	t += '<h3 class="modal-text">Learning: <b>' + exhibit.learning + '</b></h3>'
+	t += '<h3 class="modal-text">Emotional Response: <b>' + exhibit.emotionalResponse + '</b></h3>'
+	t += '<h3 class="modal-text">Unpredictability: <b>' + exhibit.unpredictability + '</b></h3>'
+	t += '<h3 class="modal-text">Number of Users: <b>' + exhibit.numberOfUsers + '</b></h3>'
+	t+= '</div>'
+	t+= '<div style="float: left; width: 60%;">'
+	t += '<img class="modal-image" src="' + exhibit.imageLink + '">'
+	t+= '</div>'
+	t += '<div style="clear:both"></div>'
+	return t 
 }
 
 function setShadow(x, y, blur, color) {
