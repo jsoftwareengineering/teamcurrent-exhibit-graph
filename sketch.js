@@ -1,7 +1,6 @@
 /*
 	things to consider/do:
 		how to handle exhibit overlap	right now, just random jitter
-		tooltips for details
 		weight sliders?
 */
 
