@@ -172,8 +172,7 @@ function drawAxes() {
 	//x ticks and labels
 	var division = (xMax - x0) / numTicks
 	var tickNum = xScaleMax / numTicks
-	textFont('Cardo')	
-	fill('gray')
+
 	for(i = 1 ; i <= numTicks ; i++) {
 		stroke(51)
 		line(x0 + division * i, y0 + tickSize, x0 + division * i, y0 - tickSize)
@@ -186,7 +185,7 @@ function drawAxes() {
 	division = (y0 - yMax) / numTicks
 	tickNum = yScaleMax / numTicks
 	for(i = 1 ; i <= 5 ; i++) {
-		stroke('gray')
+		stroke(51)
 		line(x0 + tickSize, y0 - division * i, x0 - tickSize, y0 - division * i)
 		stroke('none')
 		yAxisNumbers[i-1].html(rnd(tickNum * i))
